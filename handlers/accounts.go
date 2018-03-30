@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -56,7 +57,7 @@ func GetAccount(response http.ResponseWriter, request *http.Request) {
 
 	account.Payload.Password = ""
 
-	json, err := account.ToJSON()
+	json, err := json.Marshal(account)
 	if err != nil {
 		log.Printf("ERROR: Can't create with email=%s to a JSON object: %v\n", email, err)
 		http.Error(response, "Error while create JSON", 500)

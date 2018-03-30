@@ -2,7 +2,6 @@ package models
 
 import (
 	"crypto"
-	"encoding/json"
 	"fmt"
 
 	"github.com/arangodb/go-driver"
@@ -39,16 +38,6 @@ func (account *Account) GetPasswordHash() (string, error) {
 	hash := sha.Sum(nil)
 
 	return fmt.Sprintf("%x", hash), nil
-}
-
-// ToJSON converts an Account to a JSON []byte
-func (account *Account) ToJSON() ([]byte, error) {
-	json, err := json.Marshal(account)
-	if err != nil {
-		return nil, err
-	}
-
-	return json, nil
 }
 
 // GetID returns the ID of the account in the form of "accounts/account-key"

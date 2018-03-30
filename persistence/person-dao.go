@@ -26,3 +26,30 @@ func UpsertPerson(person *models.Person) (*models.Person, error) {
 
 	return person, nil
 }
+
+// GetAllPersons returns all persons from the database.
+func GetAllPersons() ([]models.Person, error) {
+	database, err := getArangoDatabase()
+	if err != nil {
+		return nil, err
+	}
+
+	query := "FOR p IN persons RETURN p"
+	cursor, err := database.Query(nil, query, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	persons := []models.Person{}
+	for cursor.HasMore() {
+		person := new(models.Person)
+		_, err := cursor.ReadDocument(nil, &person.Payload)
+		if err != nil {
+			return nil, err
+		}
+
+		persons = append(persons, *person)
+	}
+
+	return persons, nil
+}

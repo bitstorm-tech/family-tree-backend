@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -13,7 +14,21 @@ import (
 
 // GetPersons returns all persons
 func GetPersons(response http.ResponseWriter, request *http.Request) {
+	persons, err := persistence.GetAllPersons()
+	if err != nil {
+		log.Println("ERROR: Can't get all persons:", err)
+		http.Error(response, "Error while getting all persons", 500)
+		return
+	}
 
+	json, err := json.Marshal(persons)
+	if err != nil {
+		log.Println("ERROR: Can't convert persons to JSON []byte:", err)
+		http.Error(response, "Error while converting persons into JSON", 500)
+		return
+	}
+
+	response.Write(json)
 }
 
 // UpsertPerson inserts a new person if it does not exist in the database
