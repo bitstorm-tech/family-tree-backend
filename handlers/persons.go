@@ -42,12 +42,19 @@ func UpsertPerson(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	_, err = persistence.UpsertPerson(person)
+	person, err = persistence.UpsertPerson(person)
 	if err != nil {
 		log.Println("ERROR: Can't upsert person:", err)
 		http.Error(response, "Error while upserting person", 500)
 		return
 	}
 
-	response.WriteHeader(200)
+	json, err := json.Marshal(person)
+	if err != nil {
+		log.Println("ERROR: Can't convert person to JSON []byte", err)
+		http.Error(response, "Error while converting person into JSON", 500)
+		return
+	}
+
+	response.Write(json)
 }

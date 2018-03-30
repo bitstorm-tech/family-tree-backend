@@ -43,11 +43,12 @@ func GetAllPersons() ([]models.Person, error) {
 	persons := []models.Person{}
 	for cursor.HasMore() {
 		person := new(models.Person)
-		_, err := cursor.ReadDocument(nil, &person.Payload)
+		meta, err := cursor.ReadDocument(nil, &person.Payload)
 		if err != nil {
 			return nil, err
 		}
 
+		person.Key = meta.Key
 		persons = append(persons, *person)
 	}
 
