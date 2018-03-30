@@ -4,8 +4,6 @@ import (
 	"crypto"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 
 	"github.com/arangodb/go-driver"
 )
@@ -51,22 +49,6 @@ func (account *Account) ToJSON() ([]byte, error) {
 	}
 
 	return json, nil
-}
-
-// ExtractAccountFromRequest extracts the account from a request
-func ExtractAccountFromRequest(r *http.Request) (*Account, error) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	account := new(Account)
-	err = json.Unmarshal(body, account)
-	if err != nil {
-		return nil, err
-	}
-
-	return account, nil
 }
 
 // GetID returns the ID of the account in the form of "accounts/account-key"

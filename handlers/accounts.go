@@ -6,6 +6,7 @@ import (
 
 	"github.com/bugjoe/family-tree-backend/models"
 	"github.com/bugjoe/family-tree-backend/persistence"
+	"github.com/bugjoe/family-tree-backend/utils"
 	"github.com/gorilla/mux"
 
 	"github.com/dgrijalva/jwt-go"
@@ -18,9 +19,10 @@ type claims struct {
 	jwt.StandardClaims
 }
 
-// CreateAccountHandler handles account create requests
-func CreateAccountHandler(response http.ResponseWriter, request *http.Request) {
-	account, err := models.ExtractAccountFromRequest(request)
+// CreateAccount handles account create requests
+func CreateAccount(response http.ResponseWriter, request *http.Request) {
+	account := new(models.Account)
+	err := utils.ExtractFromRequest(request, account)
 	if err != nil {
 		log.Println("ERROR: Can't extract account from request:", err)
 		http.Error(response, "Error while parsing request body", 500)
@@ -42,8 +44,8 @@ func CreateAccountHandler(response http.ResponseWriter, request *http.Request) {
 	response.WriteHeader(200)
 }
 
-// GetAccountHandler handles get requests for accounts
-func GetAccountHandler(response http.ResponseWriter, request *http.Request) {
+// GetAccount handles get requests for accounts
+func GetAccount(response http.ResponseWriter, request *http.Request) {
 	email := mux.Vars(request)["email"]
 	account, err := persistence.GetAccountByEmail(email)
 	if err != nil {
@@ -64,10 +66,11 @@ func GetAccountHandler(response http.ResponseWriter, request *http.Request) {
 	response.Write(json)
 }
 
-// LoginHandler handles login requests. If the login is successfull, it will
+// Login handles login requests. If the login is successfull, it will
 // respond with a JWT.
-func LoginHandler(response http.ResponseWriter, request *http.Request) {
-	account, err := models.ExtractAccountFromRequest(request)
+func Login(response http.ResponseWriter, request *http.Request) {
+	account := new(models.Account)
+	err := utils.ExtractFromRequest(request, account)
 	if err != nil {
 		log.Println("ERROR: Can't extract account from request", err)
 		http.Error(response, "Error while parsing request body", 500)
